@@ -3,6 +3,3 @@ uvicorn[standard]
 ruamel.yaml
 python-dotenv
 pydantic
-pytest
-httpx
-hypothesis

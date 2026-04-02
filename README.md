@@ -44,7 +44,7 @@ An interactive UI dashboard for the Hermes Agent ecosystem.
 ### Installation & Launch
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/YourUsername/Olympus.git
+   git clone https://github.com/gusperroni/Olympus.git
    cd Olympus
    ```
 
