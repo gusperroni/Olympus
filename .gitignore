@@ -15,6 +15,10 @@ venv.bak/
 
 # Development Scripts (Not for production)
 scripts/
+build_mock.py
+start_mock.sh
+start_mock.bat
+.mock_hermes/
 
 # Pytest / Coverage
 .pytest_cache/
