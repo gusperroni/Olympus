@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Olympus ✧ The Agent Desktop</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0e14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #31353c;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #414752;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "surface-tint": "#a2c9ff",
+                "primary-container": "#58a6ff",
+                "primary": "#a2c9ff",
+                "on-primary": "#00315c",
+                "on-primary-fixed": "#001c38",
+                "surface": "#10141a",
+                "surface-container-lowest": "#0a0e14",
+                "surface-container-low": "#181c22",
+                "surface-container": "#1c2026",
+                "surface-container-high": "#262a31",
+                "surface-container-highest": "#31353c",
+                "on-surface": "#dfe2eb",
+                "on-surface-variant": "#c0c7d4",
+                "outline": "#8b919d",
+                "outline-variant": "#414752",
+                "tertiary": "#ffba42",
+                "error": "#ffb4ab",
+                "background": "#10141a",
+              },
+              fontFamily: {
+                "headline": ["Inter"],
+                "body": ["Inter"],
+                "label": ["Space Grotesk"]
+              },
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body overflow-hidden">
+    <!-- SideNavBar -->
+    <aside class="fixed left-0 top-0 h-full w-[240px] z-50 bg-[#181c22] flex flex-col py-6">
+        <div class="px-6 mb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
+                    <span class="material-symbols-outlined text-on-primary text-xl" data-icon="smart_toy">smart_toy</span>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight text-[#f0f0f0]">Olympus</h1>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <span id="agent-status-dot" class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                        <p class="text-[10px] font-label uppercase tracking-widest text-[#94a3b8]">Dashboard</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-1" id="nav-links">
+            <a class="nav-link flex items-center gap-3 px-4 py-2 text-[#94a3b8] hover:text-[#f0f0f0] transition-colors duration-150" href="#/">
+                <span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+                <span class="font-label uppercase tracking-widest text-[11px]">Overview</span>
+            </a>
+            <a class="nav-link flex items-center gap-3 px-4 py-2 text-[#94a3b8] hover:text-[#f0f0f0] transition-colors duration-150" href="#/chat">
+                <span class="material-symbols-outlined text-[20px]" data-icon="chat">chat</span>
+                <span class="font-label uppercase tracking-widest text-[11px]">Chat</span>
+            </a>
+            <a class="nav-link flex items-center gap-3 px-4 py-2 text-[#94a3b8] hover:text-[#f0f0f0] transition-colors duration-150" href="#/config">
+                <span class="material-symbols-outlined text-[20px]" data-icon="settings_input_component">settings_input_component</span>
+                <span class="font-label uppercase tracking-widest text-[11px]">Config</span>
+            </a>
+            <a class="nav-link flex items-center gap-3 px-4 py-2 text-[#94a3b8] hover:text-[#f0f0f0] transition-colors duration-150" href="#/environment">
+                <span class="material-symbols-outlined text-[20px]" data-icon="terminal">terminal</span>
+                <span class="font-label uppercase tracking-widest text-[11px]">Environment</span>
+            </a>
+            <a class="nav-link flex items-center gap-3 px-4 py-2 text-[#94a3b8] hover:text-[#f0f0f0] transition-colors duration-150" href="#/sessions">
+                <span class="material-symbols-outlined text-[20px]" data-icon="history">history</span>
+                <span class="font-label uppercase tracking-widest text-[11px]">Sessions</span>
+            </a>
+            <a class="nav-link flex items-center gap-3 px-4 py-2 text-[#94a3b8] hover:text-[#f0f0f0] transition-colors duration-150" href="#/memory">
+                <span class="material-symbols-outlined text-[20px]" data-icon="memory">memory</span>
+                <span class="font-label uppercase tracking-widest text-[11px]">Memory</span>
+            </a>
+            <a class="nav-link flex items-center gap-3 px-4 py-2 text-[#94a3b8] hover:text-[#f0f0f0] transition-colors duration-150" href="#/soul">
+                <span class="material-symbols-outlined text-[20px]" data-icon="psychology">psychology</span>
+                <span class="font-label uppercase tracking-widest text-[11px]">Soul</span>
+            </a>
+            <a class="nav-link flex items-center gap-3 px-4 py-2 text-[#94a3b8] hover:text-[#f0f0f0] transition-colors duration-150" href="#/skills">
+                <span class="material-symbols-outlined text-[20px]" data-icon="auto_fix_high">auto_fix_high</span>
+                <span class="font-label uppercase tracking-widest text-[11px]">Skills</span>
+            </a>
+            <a class="nav-link flex items-center gap-3 px-4 py-2 text-[#94a3b8] hover:text-[#f0f0f0] transition-colors duration-150" href="#/cron">
+                <span class="material-symbols-outlined text-[20px]" data-icon="schedule">schedule</span>
+                <span class="font-label uppercase tracking-widest text-[11px]">Cron Jobs</span>
+            </a>
+            
+            <a class="nav-link flex items-center gap-3 px-4 py-2 mt-4 text-[#94a3b8] hover:text-[#f0f0f0] transition-colors duration-150 border-t border-outline/10 pt-4" href="https://hermes-agent.nousresearch.com/docs/" target="_blank" rel="noopener noreferrer">
+                <span class="material-symbols-outlined text-[20px]" data-icon="menu_book">menu_book</span>
+                <span class="font-label uppercase tracking-widest text-[11px]">Docs</span>
+                <span class="material-symbols-outlined text-[14px] ml-auto opacity-50" data-icon="open_in_new">open_in_new</span>
+            </a>
+        </nav>
+        <div class="mt-auto px-4 space-y-3 pb-4">
+            <button id="refresh-btn" class="w-full py-2.5 px-4 rounded-md bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed text-sm font-bold tracking-tight opacity-90 hover:opacity-100 transition-all duration-150 flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[16px]">refresh</span> Refresh
+            </button>
+            <div id="last-updated" class="text-center text-[10px] text-outline font-mono"></div>
+            
+            <!-- Footer -->
+            <div class="pt-2 border-t border-outline/10 text-center flex justify-center gap-3 items-center">
+                <p class="text-[9px] text-outline font-mono uppercase tracking-widest">Core: <span id="hermes-version" class="text-primary font-bold">Scanning...</span></p>
+                <div class="w-1 h-1 rounded-full bg-outline/40"></div>
+                <p class="text-[9px] text-outline font-mono uppercase tracking-widest">Olympus: <span class="text-[#f0f0f0]">v1.0.0</span></p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Sub-sidebar / Session Switcher (Only visible on Chat) -->
+    <div id="sub-sidebar" class="fixed left-[240px] top-0 h-full w-[300px] bg-surface-container-low z-40 flex flex-col hidden">
+        <div class="p-6">
+            <button onclick="createNewSession()" class="w-full h-12 flex items-center justify-between px-4 rounded-lg bg-surface-container-highest border border-outline-variant/20 hover:bg-surface-bright transition-colors group">
+                <span class="text-sm font-semibold">New Chat</span>
+                <span class="material-symbols-outlined text-primary text-xl" data-icon="add_box">add_box</span>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto px-3 pb-6 space-y-2" id="session-list">
+            <!-- Sessions injected here -->
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main id="main-container" class="ml-[240px] h-screen flex flex-col bg-surface relative transition-all duration-0">
+        <header class="h-16 flex items-center justify-between px-10 bg-surface/80 backdrop-blur-md sticky top-0 z-30">
+            <div class="flex flex-col">
+                <h2 id="page-title" class="text-base font-semibold tracking-tight">Dashboard</h2>
+                <p id="page-subtitle" class="text-[11px] text-outline font-mono uppercase tracking-wider"></p>
+            </div>
+            <div class="flex items-center gap-4">
+                <!-- Removed vertical dots -->
+            </div>
+        </header>
+
+        <!-- Dynamic Content Div -->
+        <div id="content" class="flex-1 overflow-y-auto px-10 py-8 space-y-10">
+            <!-- SPA Content injected here -->
+        </div>
+        
+        <!-- Chat Input Footer (Normally hidden unless viewing #/chat) -->
+        <footer id="chat-input-footer" class="hidden px-10 pb-10 pt-4 bg-gradient-to-t from-surface to-transparent w-full">
+            <div class="max-w-5xl mx-auto">
+                <div class="relative group">
+                    <div class="absolute inset-0 -m-1 bg-gradient-to-r from-primary/10 to-primary-container/10 rounded-2xl blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
+                    <div class="relative flex items-end gap-2 bg-surface-container-lowest border-b-2 border-outline-variant/20 focus-within:border-primary transition-all p-4 rounded-xl">
+                        <textarea id="chat-input" class="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 resize-none placeholder:text-outline/50 font-body outline-none text-on-surface max-h-[50vh] overflow-y-auto" placeholder="Message Olympus..." rows="1"></textarea>
+                        <div class="flex items-center gap-1">
+                            <button id="chat-send" class="ml-2 w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed flex items-center justify-center hover:shadow-[0_0_15px_rgba(162,201,255,0.4)] transition-all">
+                                <span class="material-symbols-outlined" data-icon="send">send</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
