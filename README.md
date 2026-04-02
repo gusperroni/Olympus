@@ -1,4 +1,4 @@
-# 🏛️ Olympus
+# 🏛️ Olympus - Hermes Agent Dashboard
 
 An interactive UI dashboard for the Hermes Agent ecosystem.
 
@@ -7,9 +7,8 @@ An interactive UI dashboard for the Hermes Agent ecosystem.
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
 
-<div align="center">
-  <img src="assets/olympus_hermes_mock.gif" width="800" alt="Olympus Dashboard Demo"/>
-</div>
+<img src="assets/olympus_hermes_mock.gif" width="800" alt="Olympus Dashboard Demo"/>
+
 ---
 
 ### Project Status: Experimental
