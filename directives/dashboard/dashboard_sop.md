@@ -21,6 +21,9 @@ This domain is responsible for:
     - The backend parses files strictly. Missing files should not crash the server but return empty or default templates with a warning flag.
 4. **Chat Execution**:
     - The `/api/chat` interaction should log directly into the agent's database or forward to the agent's native interface securely.
+5. **Versioning and Transparency**:
+    - Every time updates are implemented to core project files, a Semantic Versioning bump must occur.
+    - Updates must reflect in `CHANGELOG.md` and visually in `execution/dashboard/static/index.html` (the footer interface).
 
 ## Test-Driven Development Requirement
 Before implementing any route in `fastapi_app.py`:

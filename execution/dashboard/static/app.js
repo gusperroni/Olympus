@@ -281,7 +281,7 @@ async function renderChat() {
             // Insert Database Messages First
             if (data.messages.length > 0) {
                 data.messages.forEach(m => {
-                    const parsedMarkdown = marked.parse(m.content || '');
+                    const parsedMarkdown = DOMPurify.sanitize(marked.parse(m.content || ''));
                     if (m.role === 'user') {
                         html += `
                         <div class="flex flex-row-reverse gap-6 max-w-5xl ml-auto">
@@ -417,7 +417,7 @@ async function renderMemory() {
                     <span class="px-2 py-1 bg-surface-container rounded text-xs font-mono text-outline">${data.memory.char_count} bytes</span>
                 </div>
                 <div class="prose prose-invert prose-sm text-on-surface-variant max-w-none">
-                    ${marked.parse(data.memory.content)}
+                    ${DOMPurify.sanitize(marked.parse(data.memory.content))}
                 </div>
             </div>
             <div class="bg-surface-container-low p-6 rounded-xl border border-outline-variant/20">
@@ -426,7 +426,7 @@ async function renderMemory() {
                     <span class="px-2 py-1 bg-surface-container rounded text-xs font-mono text-outline">${data.user_profile.char_count} bytes</span>
                 </div>
                 <div class="prose prose-invert prose-sm text-on-surface-variant max-w-none">
-                    ${marked.parse(data.user_profile.content || '*No profile content*')}
+                    ${DOMPurify.sanitize(marked.parse(data.user_profile.content || '*No profile content*'))}
                 </div>
             </div>
         </div>
@@ -441,7 +441,7 @@ async function renderSoul() {
     contentDiv.innerHTML = `
         <div class="bg-surface-container-low p-8 rounded-xl border border-outline-variant/20">
             <div class="prose prose-invert text-on-surface-variant prose-headings:text-primary max-w-none">
-                ${marked.parse(data.content)}
+                ${DOMPurify.sanitize(marked.parse(data.content))}
             </div>
         </div>
     `;

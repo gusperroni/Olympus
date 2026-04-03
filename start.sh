@@ -12,7 +12,7 @@ source venv/bin/activate
 
 # Install requirements
 echo "Verifying requirements..."
-pip list | grep -F -f <(sed 's/[=><].*//' execution/dashboard/requirements.txt) > /dev/null || pip install -r execution/dashboard/requirements.txt
+pip install -r execution/dashboard/requirements.txt --quiet
 
 # Start Uvicorn
 echo "Launching Olympus on http://127.0.0.1:8787..."

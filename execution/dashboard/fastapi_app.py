@@ -1,8 +1,10 @@
 import os
+import json
+import re
 from pathlib import Path
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 import ruamel.yaml
 import dotenv
@@ -36,7 +38,7 @@ _agent_version_cache = None
 
 def get_hermes_version() -> str:
     global _agent_version_cache
-    if _agent_version_cache:
+    if _agent_version_cache and _agent_version_cache != "vUnknown":
         return _agent_version_cache
         
     import shutil
@@ -55,8 +57,7 @@ def get_hermes_version() -> str:
         except Exception:
             pass
             
-    _agent_version_cache = "vUnknown"
-    return _agent_version_cache
+    return "vUnknown"
 
 def read_config() -> dict:
     config_file = hermes_home() / "config.yaml"
@@ -91,6 +92,7 @@ def read_env() -> list:
     if not env_file.exists():
         return []
     
+    KEY_PATTERN = re.compile(r'^[A-Z0-9_]+$')
     variables = []
     with open(env_file, "r") as f:
         for line in f:
@@ -99,6 +101,8 @@ def read_env() -> list:
                 continue
             if "=" in stripped:
                 k, v = stripped.split("=", 1)
+                if not KEY_PATTERN.match(k):
+                    continue
                 variables.append({
                     "key": k,
                     "value": redact(v),
@@ -116,7 +120,7 @@ def write_env(key: str, value: str):
 async def verify_localhost(request: Request, call_next):
     origin = request.headers.get("origin")
     if origin and not origin.startswith("http://127.0.0.1") and not origin.startswith("http://localhost"):
-        return HTTPException(status_code=403, detail="Forbidden: localhost only")
+        return JSONResponse(status_code=403, content={"detail": "Forbidden: localhost only"})
     response = await call_next(request)
     return response
 
@@ -156,6 +160,7 @@ class ChatRequest(BaseModel):
 def post_chat(req: ChatRequest):
     import shutil
     import subprocess
+    import logging
     
     hermes_bin = shutil.which("hermes") or str(Path.home() / ".local" / "bin" / "hermes")
     if Path(hermes_bin).exists() or shutil.which("hermes"):
@@ -164,50 +169,49 @@ def post_chat(req: ChatRequest):
             if req.session_id and req.session_id != "sess_dash":
                 cmd.extend(["--resume", req.session_id])
                 
-            subprocess.Popen(cmd)
+            process = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.DEVNULL)
+            logging.info(f"Hermes process started with PID {process.pid}")
         except Exception as e:
+            logging.error(f"Failed to start Hermes: {e}")
             return {"status": "error", "message": str(e)}
         return {"status": "success", "info": "CLI Triggered"}
     else:
         # Fallback for Windows unit testing where binary does not exist
         import uuid
         from datetime import datetime
-        conn = get_db()
-        cursor = conn.cursor()
-        timestamp = datetime.utcnow().isoformat() + "Z"
-        cursor.execute(
-            "INSERT INTO messages (session_id, role, content, timestamp) VALUES (?, ?, ?, ?)",
-            (req.session_id, req.role, req.content, timestamp)
-        )
-        conn.commit()
-        conn.close()
+        with get_db() as conn:
+            cursor = conn.cursor()
+            timestamp = datetime.utcnow().isoformat() + "Z"
+            cursor.execute(
+                "INSERT INTO messages (session_id, role, content, timestamp) VALUES (?, ?, ?, ?)",
+                (req.session_id, req.role, req.content, timestamp)
+            )
         return {"status": "success", "info": "Mock inserted"}
 
 @app.get("/api/sessions")
 def get_sessions(limit: int = 50, offset: int = 0):
     try:
-        conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute("SELECT id, source, model, started_at FROM sessions ORDER BY started_at DESC LIMIT ? OFFSET ?", (limit, offset))
-        rows = cursor.fetchall()
-        
-        sessions = []
-        for r in rows:
-            sess_id = r[0]
-            cursor.execute("SELECT COUNT(*) FROM messages WHERE session_id = ?", (sess_id,))
-            msg_count = cursor.fetchone()[0]
-            sessions.append({
-                "id": sess_id, 
-                "title": f"Session {sess_id[:6]}", 
-                "platform": r[1], 
-                "model": r[2], 
-                "started_at": r[3], 
-                "message_count": msg_count
-            })
+        with get_db() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, source, model, started_at FROM sessions ORDER BY started_at DESC LIMIT ? OFFSET ?", (limit, offset))
+            rows = cursor.fetchall()
             
-        cursor.execute("SELECT COUNT(*) FROM sessions")
-        total = cursor.fetchone()[0]
-        conn.close()
+            sessions = []
+            for r in rows:
+                sess_id = r[0]
+                cursor.execute("SELECT COUNT(*) FROM messages WHERE session_id = ?", (sess_id,))
+                msg_count = cursor.fetchone()[0]
+                sessions.append({
+                    "id": sess_id, 
+                    "title": f"Session {sess_id[:6]}", 
+                    "platform": r[1], 
+                    "model": r[2], 
+                    "started_at": r[3], 
+                    "message_count": msg_count
+                })
+                
+            cursor.execute("SELECT COUNT(*) FROM sessions")
+            total = cursor.fetchone()[0]
         return {"sessions": sessions, "total": total, "limit": limit, "offset": offset}
     except Exception as e:
         import traceback
@@ -217,15 +221,14 @@ def get_sessions(limit: int = 50, offset: int = 0):
 @app.get("/api/sessions/{session_id}/messages")
 def get_session_messages(session_id: str):
     try:
-        conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute("SELECT role, content, timestamp, tool_name FROM messages WHERE session_id = ? ORDER BY timestamp ASC", (session_id,))
-        rows = cursor.fetchall()
-        messages = [
-            {"role": r[0], "content": r[1], "timestamp": r[2], "tool_name": r[3]}
-            for r in rows
-        ]
-        conn.close()
+        with get_db() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT role, content, timestamp, tool_name FROM messages WHERE session_id = ? ORDER BY timestamp ASC", (session_id,))
+            rows = cursor.fetchall()
+            messages = [
+                {"role": r[0], "content": r[1], "timestamp": r[2], "tool_name": r[3]}
+                for r in rows
+            ]
         return {"messages": messages}
     except Exception:
         return {"messages": []}
@@ -276,7 +279,6 @@ def get_skills():
             })
     return {"skills": skills, "total": len(skills)}
 
-import json
 @app.get("/api/cron")
 def get_cron():
     cron_file = hermes_home() / "cron" / "jobs.json"
