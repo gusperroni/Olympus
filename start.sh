@@ -1,5 +1,16 @@
 #!/bin/bash
-echo "Starting Olympus ✧ Hermes Agent Dashboard..."
+echo "================================================================"
+echo " ⚠️  DEPRECATED: Olympus is no longer maintained."
+echo ""
+echo " Hermes Agent now ships a native web dashboard. Use it instead:"
+echo ""
+echo "     hermes dashboard      ->  http://127.0.0.1:9119"
+echo ""
+echo " Migration guide: https://github.com/gusperroni/Olympus#readme"
+echo " Docs: https://hermes-agent.nousresearch.com/docs/user-guide/features/web-dashboard"
+echo "================================================================"
+echo ""
+echo "Starting Olympus ✧ Hermes Agent Dashboard (legacy, unsupported)..."
 
 # Setup venv if it doesn't exist
 if [ ! -d "venv" ]; then

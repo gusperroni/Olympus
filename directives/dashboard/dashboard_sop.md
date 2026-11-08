@@ -1,5 +1,7 @@
 # Dashboard Standard Operating Procedure (SOP)
 
+> **Status: Deprecated.** This domain is superseded by the native Hermes dashboard (`hermes dashboard`). Kept for historical reference only. No new work should follow this directive.
+
 ## Domain Intent
 The Dashboard domain provides an interactive, standalone web interface to configure, monitor, and converse with the Hermes Agent. It strictly binds to localhost `127.0.0.1:8787` for security.
 
